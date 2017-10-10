@@ -346,13 +346,16 @@ function paramifyString(str, params, mod) {
 
 function regifyString(str, params) {
   var matches, last = 0, out = "";
+  var previous;
   while (matches = str.substr(last).match(/[^\w\d\- %@&]*\*[^\w\d\- %@&]*/)) {
+    if (matches[0] === previous) break;
+    previous = matches[0]
     last = matches.index + matches[0].length;
     matches[0] = matches[0].replace(/^\*/, "([_.()!\\ %@&a-zA-Z0-9-]+)");
     out += str.substr(0, matches.index) + matches[0];
   }
   str = out += str.substr(last);
-  var captures = str.match(/:([^\/]+)/ig), capture, length;
+  var captures = str.match(/:([^$\\\/]+)/ig), capture, length;
   if (captures) {
     length = captures.length;
     for (var i = 0; i < length; i++) {
@@ -723,3 +726,4 @@ Router.prototype.mount = function(routes, path) {
 
 
 }(typeof exports === "object" ? exports : window));
+
